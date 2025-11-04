@@ -1,0 +1,69 @@
+.........................................CODE...........................................
+
+import json
+from groq import Groq
+
+client = Groq(api_key=".....")  # Add your Groq API key here
+
+try:
+    with open("memory.json", "r") as f:
+        memory = json.load(f)
+except FileNotFoundError:
+    memory = {}
+
+print("Chatbot with memory running. Type 'exit' to stop.\n")
+
+while True:
+    user = input("You: ")
+
+    if user.lower() == "exit":
+        print("Goodbye!")
+        break
+
+    known = ", ".join(f"{k}: {v}" for k, v in memory.items())
+    system = f"You are a chatbot that remembers details about the user. Known info: {known}"
+
+    try:
+        response = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": user},
+            ],
+        )
+        print("AI:", response.choices[0].message.content, "\n")
+
+    except Exception as e:
+        print("Error connecting to Groq:", e)
+        continue
+
+    if "my name is" in user.lower():
+        memory["name"] = user.split("my name is")[-1].strip()
+    elif "i like" in user.lower():
+        memory["likes"] = user.split("i like")[-1].strip()
+
+    with open("memory.json", "w") as f:
+        json.dump(memory, f)
+
+
+
+
+................................EXPLAINATION..............................
+
+This code is a basic chatbot with memory built using the Groq API.
+
+It does three main things:
+
+1. Takes user input (like a normal chatbot).
+2. Remembers facts the user mentions — for example, “My name is Ansh” or “I like coffee.”
+3. Saves that memory in a file called memory.json, so even if you stop and rerun it, it still remembers what you said earlier.
+
+
+
+
+
+..................................ERROR...................................
+
+As for the error, itd coming where the code tried to connect with the groqs servers...
+
+" groq.APIConnectionError "
