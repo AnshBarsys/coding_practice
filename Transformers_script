@@ -1,0 +1,14 @@
+.........................................................................TRANSFORMERS SCRIPT...................................................................
+
+
+from transformers import pipeline
+
+nlp = pipeline("sentiment-analysis")
+
+text = "This is my first AI script using Transformers!"
+result = nlp(text)
+
+print("Input:", text)
+print("Prediction:", result[0]['label'])
+print("Score:", result[0]['score'])
+
